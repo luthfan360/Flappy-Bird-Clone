@@ -1,4 +1,4 @@
-# Flappy-Bird-Clone-JS
+# Flappy Bird Clone JS
 
 An attempt to make a Flappy Bird clone with Phaser (unfinished).
 
