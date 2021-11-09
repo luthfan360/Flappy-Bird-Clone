@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flappy Bird Clone</title>
+    <script src="//cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.js"></script>
+    <style>
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<script>
+    var config = {
+    type: Phaser.AUTO,
+    width: 1280,
+    height: 720,
+    scene: {
+        preload: preload,
+        create: create,
+        update: update
+    },
+    physics: {
+        default: 'arcade',
+        arcade: {
+            debug: false
+            }
+        }
+    }
+
+    var player
+    var cursors
+    var pipes
+
+    var timedEvent
+
+    var game = new Phaser.Game(config)
+
+    function preload()
+    {
+        this.load.image('Background', 'assets/Background.png')
+        this.load.image('Bird', 'assets/Birb.png')
+        this.load.image('Pipe', 'assets/Pipe.png')
+    }
+
+    function create()
+    {
+        this.add.image(640, 200, 'Background').setScale(1.5)
+
+        player = this.physics.add.sprite(640, 360, 'Bird').setScale(0.1)
+        player.setCollideWorldBounds(true)
+
+        cursors = this.input.keyboard.createCursorKeys()
+
+        timedEvent = this.time.addEvent({delay: 2000, callback: spawnPipes, callbackScope: this, loop: true})
+    }
+
+    function spawnPipes()
+    {
+        pipes = this.physics.add.group()
+        
+        var y = Phaser.Math.Between(550, 750)
+
+        var bottomPipe = pipes.create(1280, y, 'Pipe').setScale(0.5)
+        var topPipe = pipes.create(1280, y - 500, 'Pipe').setScale(0.5).setFlip(false, true)
+
+        bottomPipe.setVelocityX(-300)
+        topPipe.setVelocityX(-300)
+
+        this.physics.add.overlap(player, pipes, hitPipe, null, this)
+    }
+
+    function hitPipe()
+    {
+        this.physics.pause()
+        timedEvent.remove(false)
+    }
+
+    function update()
+    {
+        if (cursors.up.isDown)
+        {
+            player.setVelocityY(-300)
+        }
+        else
+        {
+            player.setVelocityY(150)
+        }
+    }
+
+</script>
+    
+</body>
+</html>
