@@ -35,6 +35,15 @@
     var player
     var cursors
     var pipes
+    var layer
+
+    var score = 0
+    var scoreText
+    var gameOverText
+    var restartHint
+    var highScore
+
+    var gameOver = false
 
     var timedEvent
 
@@ -57,6 +66,11 @@
         cursors = this.input.keyboard.createCursorKeys()
 
         timedEvent = this.time.addEvent({delay: 2000, callback: spawnPipes, callbackScope: this, loop: true})
+
+        scoreText = this.add.text(640, 100, score, {fontFamily: 'Arial', fontSize: '60px', fontStyle: 'bold', color: 'white'})
+        gameOverText = this.add.text(640, 360, '', {fontFamily: 'Arial', fontSize: '60px', fontStyle: 'bold', color: 'red'}).setOrigin(0.5)
+        restartHint = this.add.text(640, 420, '', {fontFamily: 'Arial', fontSize: '30px', fontStyle: 'bold', color: 'red'}).setOrigin(0.5)
+        highScore = this.add.text(640, 460, '', {fontFamily: 'Arial', fontSize: '30px', fontStyle: 'bold', color: 'white'}).setOrigin(0.5)
     }
 
     function spawnPipes()
@@ -72,12 +86,22 @@
         topPipe.setVelocityX(-300)
 
         this.physics.add.overlap(player, pipes, hitPipe, null, this)
+
+        score += 1
+        scoreText.setText(score)
     }
 
     function hitPipe()
     {
         this.physics.pause()
         timedEvent.remove(false)
+
+        gameOverText.setText('GAME OVER')
+        restartHint.setText('Press "Left" to restart')
+        highScore.setText('High Score : ' + score)
+        
+        gameOver = true
+        score = 0
     }
 
     function update()
@@ -89,6 +113,11 @@
         else
         {
             player.setVelocityY(150)
+        }
+
+        if (cursors.left.isDown && gameOver == true)
+        {
+            this.scene.restart()
         }
     }
 
